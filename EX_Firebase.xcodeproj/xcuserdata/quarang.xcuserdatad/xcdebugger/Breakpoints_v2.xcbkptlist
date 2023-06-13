@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "7CB5FD81-4642-4D43-AD70-7D8BC1839EE5"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "73513B51-19D0-432E-83E2-91B35A5F98AC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EX_Firebase/FireStore/UserManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "UserManager"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "73513B51-19D0-432E-83E2-91B35A5F98AC - 53269f2ef9609520"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for EX_Firebase.UserManager.getUser(userId: Swift.String) async throws -&gt; EX_Firebase.UserDataBase"
+                  moduleName = "EX_Firebase"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/quarang/Documents/QUARANG&apos;S/Project/EX_Firebase/EX_Firebase/FireStore/UserManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "832">
+               </Location>
+               <Location
+                  uuid = "73513B51-19D0-432E-83E2-91B35A5F98AC - 53269f2ef9609520"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for EX_Firebase.UserManager.getUser(userId: Swift.String) async throws -&gt; EX_Firebase.UserDataBase"
+                  moduleName = "EX_Firebase"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/quarang/Documents/QUARANG&apos;S/Project/EX_Firebase/EX_Firebase/FireStore/UserManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "1004">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "11FE59BF-D963-4F98-834B-EA39E45CC88F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EX_Firebase/FireStore/UserManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "UserManager"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
