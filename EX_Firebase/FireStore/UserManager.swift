@@ -71,7 +71,7 @@ final class UserManager{
         return decoder
     }()
     
-    func createNewUser(user:UserDataBase) async throws{
+    func createNewUser(user:UserDataBase) async throws{ //async throws 로 선언된 메서드만 await로 호출가능
         try userDocument(userId:user.userId).setData(from: user,merge: false,encoder: encoder)
     }
     

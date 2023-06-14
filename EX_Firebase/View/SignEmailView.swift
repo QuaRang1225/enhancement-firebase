@@ -28,9 +28,7 @@ final class SignEmailViewModel:ObservableObject{
             print("이메일과 패스워드를 입력하지 않았습니다.")
             return
         }
-        let authUser = try await AuthenticationManager.shared.signInUser(email: email, password: password) //값을 굳이 안쓰고 컴파일러에 값이 있을
-        let user = UserDataBase(auth: authUser)
-        try await UserManager.shared.createNewUser(user: user)
+        try await AuthenticationManager.shared.signInUser(email: email, password: password) //값을 굳이 안쓰고 컴파일러에 값이 있을
         print("인증 성공")
     }
     

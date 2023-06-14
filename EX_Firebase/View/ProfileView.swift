@@ -112,6 +112,9 @@ struct ProfileView: View {
 
             }
         }
+        .refreshable {
+            try? await vm.loadCurrentUser()
+        }
         .task{
             try? await vm.loadCurrentUser()
             //메서드 내에서 에러처리를 하지 않았기 때문에 옵셔널 선언
