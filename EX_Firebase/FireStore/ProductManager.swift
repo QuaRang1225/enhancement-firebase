@@ -25,7 +25,9 @@ final class ProductManager{
     }
     
     private func getAllProducts() async throws -> [Product]{
-        try await productCollection.getDocuments2(as: Product.self)
+        try await productCollection
+            .limit(to: 5)   //페이지수 5개로 고정
+            .getDocuments2(as: Product.self)
     }
     
     private func getAllProductSortByPrice(descending:Bool) async throws -> [Product]{
