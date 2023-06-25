@@ -14,7 +14,7 @@ struct DummyJson:Codable{
     let total,skip,limit:Int
 
 }
-struct Product: Identifiable,Codable {
+struct Product: Identifiable,Codable,Equatable {    //Equatable
     let id: Int
     let title, description: String?
     let price: Int?
@@ -23,5 +23,9 @@ struct Product: Identifiable,Codable {
     let brand, category: String?
     let thumbnail: String?
     let images: [String]?
+    
+    static func == (lhs:Product,rhs:Product)->Bool{
+        return lhs.id == rhs.id
+    }
 }
 

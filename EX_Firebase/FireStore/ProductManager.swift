@@ -24,49 +24,128 @@ final class ProductManager{
         try productDocument(productId: String(product.id)).setData(from: product,merge: false)  //merge - true 병합(기존 문서에 추가 혹은 업데이트)  //fase 대체(기존 문서로 덮어씀 완전 교체)
     }
     
-    private func getAllProducts() async throws -> [Product]{
-        try await productCollection
-            .limit(to: 5)   //페이지수 5개로 고정
-            .getDocuments2(as: Product.self)
+//    private func getAllProducts() async throws -> [Product]{
+//        try await productCollection
+////            .limit(to: 5)   //페이지수 5개로 고정
+//            .getDocuments2(as: Product.self)
+//    }
+//
+//    private func getAllProductSortByPrice(descending:Bool) async throws -> [Product]{
+//        try await productCollection
+//            .order(by: "price",descending: descending)
+//            .getDocuments2(as: Product.self)
+//    }
+//    private func getAllProductSortByCategory(category:String) async throws -> [Product]{
+//        try await productCollection
+//            .whereField("category", isEqualTo: category)
+//            .getDocuments2(as: Product.self)
+//    }
+//    private func getAllProductSortByCategoryPrice(descending:Bool,category:String) async throws -> [Product]{
+//        try await productCollection
+//            .whereField("category", isEqualTo: category)
+//            .order(by: "price",descending: descending)
+//            .getDocuments2(as: Product.self)
+//    }
+    
+    private func getAllProductsQuery()-> Query{
+        productCollection
+//            .limit(to: 5)   //페이지수 5개로 고정
     }
     
-    private func getAllProductSortByPrice(descending:Bool) async throws -> [Product]{
-        try await productCollection
+    private func getAllProductSortByPriceQuery(descending:Bool)  -> Query{
+       productCollection
             .order(by: "price",descending: descending)
-            .getDocuments2(as: Product.self)
     }
-    private func getAllProductSortByCategory(category:String) async throws -> [Product]{
-        try await productCollection
+    private func getAllProductSortByCategoryQuery(category:String) -> Query{
+        productCollection
             .whereField("category", isEqualTo: category)
-            .getDocuments2(as: Product.self)
     }
-    private func getAllProductSortByCategoryPrice(descending:Bool,category:String) async throws -> [Product]{
-        try await productCollection
+    private func getAllProductSortByCategoryPriceQuery(descending:Bool,category:String)  -> Query{
+        productCollection
             .whereField("category", isEqualTo: category)
             .order(by: "price",descending: descending)
-            .getDocuments2(as: Product.self)
     }
-    func getAllProducts(descending:Bool?,category:String?) async throws -> [Product]{
+    func getAllProducts(descending:Bool?,category:String?,count:Int,lastDocument:DocumentSnapshot?) async throws -> (product : [Product],lastDocument:DocumentSnapshot?){
+        
+        var query:Query = getAllProductsQuery()
+        
         if let descending,let category{
-            return try await getAllProductSortByCategoryPrice(descending: descending, category: category)
+            query =  getAllProductSortByCategoryPriceQuery(descending: descending, category: category)
         }else if let descending{
-            return try await getAllProductSortByPrice(descending: descending)
+            query =  getAllProductSortByPriceQuery(descending: descending)
         }else if let category{
-            return try await getAllProductSortByCategory(category: category )
+            query = getAllProductSortByCategoryQuery(category: category )
         }
-        return try await getAllProducts()
+        return try await query
+            .limit(to: count)
+            .startOptiaonal(afterDocumnet: lastDocument)
+            .getDocumentSnapshot(as: Product.self)
+        
+
+        
     }
+    func allProductCount()async throws -> Int{
+        try await productCollection.aggregateCount()
+    }
+   
+    
+//
+//    func getProductByRationg(count:Int,lastRating:Double?) async throws -> [Product]{
+//        try await productCollection
+//            .order(by:"rating",descending: true)
+//            .limit(to: count)
+//            .start(after: [lastRating ?? 999999])
+//            .getDocuments2(as: Product.self)
+//    }
+//    func getProductByRationg(count:Int,lastDocument:DocumentSnapshot?) async throws -> (product : [Product],lastDocument:DocumentSnapshot?){
+//        if let lastDocument{
+//            return try await productCollection
+//                .order(by:"rating",descending: true)
+//                .limit(to: count)
+//                .start(afterDocument: lastDocument)
+//                .getDocumentSnapshot(as: Product.self)
+//        }else{
+//            return try await productCollection
+//                .order(by:"rating",descending: true)
+//                .limit(to: count)
+//                .getDocumentSnapshot(as: Product.self)
+//        }
+
+//    }
+    
+    
 }
 
 
 
 extension Query{    //코드 확장성을 위해 제네릭으로 사용
+//    func getDocuments2<T>(as types : T.Type)async throws -> [T] where T:Decodable{
+//        let snapshot = try await self.getDocuments()
+//
+//        return try snapshot.documents.map({document in
+//            try document.data(as: T.self)
+//        })
+//    }
     func getDocuments2<T>(as types : T.Type)async throws -> [T] where T:Decodable{
+       try await getDocumentSnapshot(as:types).product
+    }
+    func getDocumentSnapshot<T>(as types : T.Type)async throws -> (product : [T],lastDocument:DocumentSnapshot?) where T:Decodable{
         let snapshot = try await self.getDocuments()
         
-        return try snapshot.documents.map({document in
+        let product = try snapshot.documents.map({document in
             try document.data(as: T.self)
         })
+        return (product,snapshot.documents.last)
+    }
+    
+    func startOptiaonal(afterDocumnet:DocumentSnapshot?) ->Query{
+        guard let afterDocumnet else{ return self }
+        return self.start(afterDocument: afterDocumnet)
+    }
+    
+    func aggregateCount() async throws-> Int{
+        let snapshot = try await self.count.getAggregation(source:.server)   //쿼리문서수 계산 빍드 리딩 시간 절약
+        return Int(truncating: snapshot.count)
     }
 }
 //func getAllProducts() async throws -> [Product]{

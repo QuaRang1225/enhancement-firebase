@@ -7,12 +7,16 @@
 
 import SwiftUI
 import Kingfisher
+import FirebaseFirestore
+
 @MainActor
 final class ProductViewModel:ObservableObject{
     @Published var products:[Product] = []
     @Published var selectFilter:FilterOption? = nil
     @Published var selectCategoryFilter:CategoryOption? = nil
-//
+    private var lastDocument:DocumentSnapshot? = nil
+    
+    //
 //    func getAllProdcut() async throws{
 //        self.products = try await ProductManager.shared.getAllProducts()
 //    }
@@ -72,26 +76,51 @@ final class ProductViewModel:ObservableObject{
     
     func filterSelected(option:FilterOption) async throws{
         self.selectFilter = option
+        self.products = []
+        self.lastDocument = nil
         self.getProduct()
     }
     func categorySelected(option:CategoryOption) async throws{
 
         self.selectCategoryFilter = option
+        self.products = []
+        self.lastDocument = nil
         self.getProduct()
     }
     
     
     func getProduct() {
         Task{
-            self.products = try await ProductManager.shared.getAllProducts(descending: selectFilter?.priceDescending, category: selectCategoryFilter?.rawValue)
+            let (newProduct,lastDocument)  = try await ProductManager.shared.getAllProducts(descending: selectFilter?.priceDescending, category: selectCategoryFilter?.categoryKey, count: 10,lastDocument: lastDocument)
+           self.products.append(contentsOf: newProduct)
+            if let lastDocument{
+                self.lastDocument = lastDocument
+            }
         }
     }
+    
+    func getProductCount(){
+        Task{
+            let count = try await ProductManager.shared.allProductCount()
+            print("리스트 갯수\(count)")
+        }
+    }
+//    func getProductByRationg(){
+//        Task{
+//            let (newProduct,lastDocument)  = try await ProductManager.shared.getProductByRationg(count: 3, lastDocument: lastDocument)
+//            self.products.append(contentsOf: newProduct)
+//            self.lastDocument = lastDocument
+//        }
+//    }
 }
 
 struct ProductView: View {
     @StateObject var vm = ProductViewModel()
     var body: some View {
         List{
+//            Button("더보기"){
+//                vm.getProductByRationg()
+//            }
             ForEach(vm.products) { pro in
                 HStack(alignment: .top){
                     KFImage(URL(string: pro.thumbnail!))
@@ -111,7 +140,12 @@ struct ProductView: View {
                     }.font(.callout)
                         .foregroundColor(.secondary)
                 }
-                
+                if pro == vm.products.last{
+                    ProgressView()
+                        .onAppear{
+                            vm.getProduct()
+                        }
+                }
             }
            
         }.navigationTitle("프로덕션")
@@ -145,6 +179,7 @@ struct ProductView: View {
             }
         .onAppear {
             vm.getProduct()   //에러처리를 안했기 때문에 try? 형태를 쓴다
+            vm.getProductCount()
         }
     }
 }

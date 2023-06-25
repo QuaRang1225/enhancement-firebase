@@ -24,7 +24,8 @@ struct YourApp: App {
 
   var body: some Scene {
     WindowGroup {
-        RootView()
+//        RootView()
+        HomeView()
     }
   }
 }
