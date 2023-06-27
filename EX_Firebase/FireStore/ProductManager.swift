@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Combine
 
 final class ProductManager{
     
@@ -51,6 +52,9 @@ final class ProductManager{
         productCollection
 //            .limit(to: 5)   //페이지수 5개로 고정
     }
+    func getProduct(productId:String) async throws -> Product{
+        try await productDocument(productId: productId).getDocument(as: Product.self)
+    }
     
     private func getAllProductSortByPriceQuery(descending:Bool)  -> Query{
        productCollection
@@ -87,7 +91,7 @@ final class ProductManager{
     func allProductCount()async throws -> Int{
         try await productCollection.aggregateCount()
     }
-   
+    
     
 //
 //    func getProductByRationg(count:Int,lastRating:Double?) async throws -> [Product]{
@@ -146,6 +150,19 @@ extension Query{    //코드 확장성을 위해 제네릭으로 사용
     func aggregateCount() async throws-> Int{
         let snapshot = try await self.count.getAggregation(source:.server)   //쿼리문서수 계산 빍드 리딩 시간 절약
         return Int(truncating: snapshot.count)
+    }
+    func addSnapShotListener<T>(as type:T.Type) -> (AnyPublisher<[T],Error>,ListenerRegistration) where T : Decodable{
+        let publisher = PassthroughSubject<[T],Error>()
+        let listener = self.addSnapshotListener { querySnapshot, error in
+            guard let document = querySnapshot?.documents else{
+                print("문서가 없습니다.")
+                return
+            }
+            
+            let products:[T] = document.compactMap( { try? $0.data(as: T.self)})
+            publisher.send(products)
+        }
+        return (publisher.eraseToAnyPublisher(),listener)
     }
 }
 //func getAllProducts() async throws -> [Product]{

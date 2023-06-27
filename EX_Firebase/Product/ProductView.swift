@@ -98,13 +98,19 @@ final class ProductViewModel:ObservableObject{
             }
         }
     }
-    
-    func getProductCount(){
+    func addUserFavoriteProduct(productId:Int){
         Task{
-            let count = try await ProductManager.shared.allProductCount()
-            print("리스트 갯수\(count)")
+            let authDataReslut = try AuthenticationManager.shared.getUser()
+            try? await UserManager.shared.addUserFavoriteProduct(userId:authDataReslut.uid,productId:productId) //실패할경우 예외처리 X
         }
     }
+    
+//    func getProductCount(){
+//        Task{
+//            let count = try await ProductManager.shared.allProductCount()
+//            print("리스트 갯수\(count)")
+//        }
+//    }
 //    func getProductByRationg(){
 //        Task{
 //            let (newProduct,lastDocument)  = try await ProductManager.shared.getProductByRationg(count: 3, lastDocument: lastDocument)
@@ -122,24 +128,12 @@ struct ProductView: View {
 //                vm.getProductByRationg()
 //            }
             ForEach(vm.products) { pro in
-                HStack(alignment: .top){
-                    KFImage(URL(string: pro.thumbnail!))
-                        .resizable()
-                        .frame(width: 50,height: 50)
-                        .cornerRadius(10)
-                    
-                    VStack(alignment: .leading,spacing:5){
-                        Text(pro.title ?? "")
-                            .font(.body)
-                            .foregroundColor(.primary)
-                        Text("$" + String(pro.price ?? 0))
-                        Text("설명 : " + String(pro.description ?? ""))
-                        Text("순위 : " + String(pro.rating ?? 0.0))
-                        Text("브랜드 : " + String(pro.brand ?? ""))
-                        Text("카테고리 : " + String(pro.category ?? ""))
-                    }.font(.callout)
-                        .foregroundColor(.secondary)
-                }
+                ProductRowView(pro: pro)
+                    .contextMenu{
+                        Button("찜목록 추가"){
+                            vm.addUserFavoriteProduct(productId: pro.id)
+                        }
+                    }
                 if pro == vm.products.last{
                     ProgressView()
                         .onAppear{
@@ -179,7 +173,7 @@ struct ProductView: View {
             }
         .onAppear {
             vm.getProduct()   //에러처리를 안했기 때문에 try? 형태를 쓴다
-            vm.getProductCount()
+//            vm.getProductCount()
         }
     }
 }

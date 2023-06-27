@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import Combine
 
 struct Movie:Codable{
     let id:String
@@ -60,6 +61,14 @@ final class UserManager{
     private func userDocument(userId:String) -> DocumentReference{
         userCollection.document(userId)
     }
+    
+    private func userFavoriteProductCollection(userId:String)->CollectionReference{
+        userDocument(userId: userId).collection("favorite_product")
+    }
+    private func userFavoriteProdctDocument(userId:String,favoriteProductId:String) -> DocumentReference{
+        userFavoriteProductCollection(userId: userId).document(favoriteProductId)
+    }
+    
     private let encoder:Firestore.Encoder = {
         let encoder = Firestore.Encoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase   //ex) dateCreadted -> datae_created
@@ -70,6 +79,8 @@ final class UserManager{
         decoder.keyDecodingStrategy = .convertFromSnakeCase //datae_created -> dateCreadted
         return decoder
     }()
+    
+    private var userFavoriteProductListener:ListenerRegistration? = nil
     
     func createNewUser(user:UserDataBase) async throws{ //async throws 로 선언된 메서드만 await로 호출가능
         try userDocument(userId:user.userId).setData(from: user,merge: false,encoder: encoder)
@@ -129,5 +140,75 @@ final class UserManager{
     func deleteFavoriteMovie(userId:String) async throws{
         let data:[String:Any?] = ["favorite_movie":nil]
         try await userDocument(userId:userId).updateData(data as [AnyHashable : Any])
+    }
+    
+    
+    func addUserFavoriteProduct(userId:String,productId:Int)async throws{
+        let document = userFavoriteProductCollection(userId: userId).document()
+        let documentId = document.documentID
+        
+        let data:[String:Any] = [
+            "id" : documentId,
+            "product_id" : productId,
+            "date_created" : Timestamp()
+        ]
+        try await document.setData(data,merge: false)
+    }
+    
+    func removeUserFavoriteProduct(userId:String,favoriteProductId:String)async throws{
+        try await userFavoriteProdctDocument(userId: userId, favoriteProductId: favoriteProductId).delete()
+    }
+    func getAllUserFavoriteProduct(userId:String)async throws -> [UserFavoritProduct]{
+        try await userFavoriteProductCollection(userId: userId).getDocuments2(as: UserFavoritProduct.self)
+    }
+    
+    func removeListenerForAllUserFavoriteProdcut2(){    //ex)리스러 종료
+        self.userFavoriteProductListener?.remove()
+    }
+    func addListenerAlluserFavoriteProducts(userId:String,compeletion:@escaping ([UserFavoritProduct]) -> Void){
+        let listenler = userFavoriteProductCollection(userId: userId).addSnapshotListener { querySnapshot, error in
+            guard let document = querySnapshot?.documents else{
+                print("문서가 없습니다.")
+                return
+            }
+            
+            let products:[UserFavoritProduct] = document.compactMap( { try? $0.data(as: UserFavoritProduct.self)})
+            compeletion(products)
+        }
+        self.userFavoriteProductListener = listenler
+    }
+    
+//    func addListenerAlluserFavoriteProducts(userId:String) -> PassthroughSubject<[UserFavoritProduct],Error>{
+//        let publisher = PassthroughSubject<[UserFavoritProduct],Error>()
+//
+//        self.userFavoriteProductListener = userFavoriteProductCollection(userId: userId).addSnapshotListener { querySnapshot, error in
+//            guard let document = querySnapshot?.documents else{
+//                print("문서가 없습니다.")
+//                return
+//            }
+//
+//            let products:[UserFavoritProduct] = document.compactMap( { try? $0.data(as: UserFavoritProduct.self)})
+//            publisher.send(products)
+//        }
+//        return publisher.eraseToAnyPublisher()
+//    }
+    func addListenerAlluserFavoriteProducts(userId:String) -> AnyPublisher<[UserFavoritProduct],Error>{
+        let (publisher,listener) = userFavoriteProductCollection(userId: userId)
+            .addSnapShotListener(as:UserFavoritProduct.self)
+        self.userFavoriteProductListener = listener
+        return publisher
+    }
+    
+}
+
+struct UserFavoritProduct:Codable{
+    let id:String
+    let productId:Int
+    let dateCreated:Date
+    
+    enum CodingKeys:String,CodingKey{
+        case id
+        case productId = "product_id"
+        case dateCreated = "date_created"
     }
 }
