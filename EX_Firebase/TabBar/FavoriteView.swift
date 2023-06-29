@@ -46,7 +46,6 @@ final class FavoriteViewModel:ObservableObject{
 }
 struct FavoriteView: View {
     @StateObject var vm = FavoriteViewModel()
-    @State var didAppear = false
     var body: some View {
         List{
             ForEach(vm.products,id:\.id.self) { pro in  //제품 분간기준 id로 했기때문

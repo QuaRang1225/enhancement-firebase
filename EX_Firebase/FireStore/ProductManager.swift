@@ -69,7 +69,7 @@ final class ProductManager{
             .whereField("category", isEqualTo: category)
             .order(by: "price",descending: descending)
     }
-    func getAllProducts(descending:Bool?,category:String?,count:Int,lastDocument:DocumentSnapshot?) async throws -> (product : [Product],lastDocument:DocumentSnapshot?){
+    func getAllProducts(descending:Bool?,category:String?,count:Int,lastDocument:DocumentSnapshot?) async throws -> ([Product],DocumentSnapshot?){
         
         var query:Query = getAllProductsQuery()
         
@@ -84,9 +84,6 @@ final class ProductManager{
             .limit(to: count)
             .startOptiaonal(afterDocumnet: lastDocument)
             .getDocumentSnapshot(as: Product.self)
-        
-
-        
     }
     func allProductCount()async throws -> Int{
         try await productCollection.aggregateCount()
@@ -158,7 +155,6 @@ extension Query{    //코드 확장성을 위해 제네릭으로 사용
                 print("문서가 없습니다.")
                 return
             }
-            
             let products:[T] = document.compactMap( { try? $0.data(as: T.self)})
             publisher.send(products)
         }

@@ -28,11 +28,13 @@ final class SignEmailViewModel:ObservableObject{
             print("이메일과 패스워드를 입력하지 않았습니다.")
             return
         }
+//        let _ = try await AuthenticationManager.shared.signInUser(email: email, password: password)   //이렇게 안하려면  @discardableResult 사용
         try await AuthenticationManager.shared.signInUser(email: email, password: password) //값을 굳이 안쓰고 컴파일러에 값이 있을
         print("인증 성공")
     }
     
 }
+
 struct SignEmailView: View {
     @Binding var showSignView:Bool
     @StateObject private var vm = SignEmailViewModel()

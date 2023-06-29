@@ -74,13 +74,13 @@ final class ProductViewModel:ObservableObject{
     }
     
     
-    func filterSelected(option:FilterOption) async throws{
+    func filterSelected(option:FilterOption){
         self.selectFilter = option
         self.products = []
         self.lastDocument = nil
         self.getProduct()
     }
-    func categorySelected(option:CategoryOption) async throws{
+    func categorySelected(option:CategoryOption){
 
         self.selectCategoryFilter = option
         self.products = []
@@ -148,9 +148,10 @@ struct ProductView: View {
                     Menu("가격 필터 : \(vm.selectFilter?.rawValue ?? "none")"){
                         ForEach(ProductViewModel.FilterOption.allCases,id:\.self) { filter in
                             Button {
-                                Task{
-                                    try? await vm.filterSelected(option: filter)
-                                }
+//                                Task{
+//                                    try? await vm.filterSelected(option: filter)
+//                                }
+                                vm.filterSelected(option: filter)
                             } label: {
                                 Text(filter.rawValue)
                             }
@@ -161,9 +162,10 @@ struct ProductView: View {
                     Menu("제품 필터 : \(vm.selectCategoryFilter?.rawValue ?? "none")"){
                         ForEach(ProductViewModel.CategoryOption.allCases,id:\.self) { filter in
                             Button {
-                                Task{
-                                    try? await vm.categorySelected(option: filter)
-                                }
+//                                Task{
+//                                    vm.categorySelected(option: filter)
+//                                }
+                                vm.categorySelected(option: filter)
                             } label: {
                                 Text(filter.rawValue)
                             }

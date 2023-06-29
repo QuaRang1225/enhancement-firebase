@@ -7,22 +7,37 @@
 
 import SwiftUI
 
+class AA{
+    static let aa = AA()
+    
+    func BBB() -> String{
+        return "sdasd"
+    }
+}
+class AAA:ObservableObject{
+    @Published var aa = ""
+    
+    func aaChange(){
+        aa = AA.aa.BBB()
+    }
+    func aaChange1(){
+        aa = "sadasd"
+    }
+    func aaChange2(){
+        aa = "sadasd"
+    }
+}
 struct TestView: View {
-    @State var num = "\(56)"
+    @State var vm = AAA()
     var body: some View {
         VStack{
-            Text(num)
+            Text(vm.aa)
             Button {
-              let value = pow(10, Int(num.count))
-            let value1 = Decimal(Double(num)!)/value
-
-                num = "\(value1)"
+                vm.aaChange()
             } label: {
                 Image(systemName: "heart")
             }
-
         }
-        
     }
 }
 

@@ -204,7 +204,6 @@
 				815A23C32A36F4E1009E1752 /* SignEmailView.swift */,
 				815A23C12A36F432009E1752 /* AuthenticationView.swift */,
 				818E1F0A2A38242E00399317 /* ProfileView.swift */,
-				8192B71B2A49BD0900754B46 /* ProductRowView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -247,6 +246,7 @@
 			children = (
 				81F138552A39747C001A6134 /* DummyJson.swift */,
 				81F138572A3976CD001A6134 /* ProductView.swift */,
+				8192B71B2A49BD0900754B46 /* ProductRowView.swift */,
 			);
 			path = Product;
 			sourceTree = "<group>";

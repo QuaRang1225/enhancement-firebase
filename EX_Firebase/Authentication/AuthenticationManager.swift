@@ -29,14 +29,14 @@ final class AuthenticationManager{
         
     }
     
-    @discardableResult 
+    @discardableResult
     func signInUser(email:String,password:String) async throws-> AuthDataResult{
         let authDataResult = try await Auth.auth().signIn(withEmail:email,password:password)
         return AuthDataResult(user: authDataResult.user) //authDataResult.user - 유저정보(email,password,프로필이미지)
         
     }
     
-    func getUser() throws -> AuthDataResult{        //데이터를 가져오는것이 아니고 그냥 값을 확인할 경우에는 비동기 이빈트일 필요가 없기 때문에 async를 사용하지 않음(서버로 도달하지 않고 로컬에서 데이터를 구분함)
+    func getUser() throws -> AuthDataResult{        //데이터를 가져오는것이 아니고 그냥 값을 확인할 경우에는 비동기 이벤트일 필요가 없기 때문에 async를 사용하지 않음(서버로 도달하지 않고 (fireSDK)로컬에서 데이터를 구분함)
         guard let user = Auth.auth().currentUser else{
             throw URLError(.badServerResponse)
         }
