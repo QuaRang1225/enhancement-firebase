@@ -23,6 +23,8 @@ struct UserDataBase:Codable{
     var isPremium:Bool?
     let preference:[String]?
     let favoriteMovie:Movie?
+    let profileImage:String?
+    let profileImageUrl:String?
     
     init(auth:AuthDataResult){  //처음 값을 저장할때 - 인증
         self.userId = auth.uid
@@ -31,14 +33,18 @@ struct UserDataBase:Codable{
         self.isPremium = false
         self.preference = nil
         self.favoriteMovie = nil
+        self.profileImage = nil
+        self.profileImageUrl = nil
     }
-    init(userId:String, email:String?,dateCreated:Date?,isPremium:Bool?,preference:[String]?,favoriteMovie:Movie?){ //값이 바뀐 후 업데이트
+    init(userId:String, email:String?,dateCreated:Date?,isPremium:Bool?,preference:[String]?,favoriteMovie:Movie?,profileImagePath:String?,profileImageUrl:String?){ //값이 바뀐 후 업데이트
         self.userId = userId
         self.email = email
         self.dateCreated = dateCreated
         self.isPremium = isPremium
         self.preference = preference
         self.favoriteMovie = favoriteMovie
+        self.profileImage = profileImagePath
+        self.profileImageUrl = profileImageUrl
     }
     
 //    func togglePremium() -> UserDataBase{
@@ -121,6 +127,10 @@ final class UserManager{
         let data:[String:Any] = ["is_premium":isPremium]
         try await userDocument(userId:userId).updateData(data)
     }
+    func updateUserProfileImagePath(userId:String,path:String?,url:String?)async throws{
+        let data1:[String:Any] = ["profile_image":path,"profile_image_url":url]
+        try await userDocument(userId:userId).updateData(data1)
+    }
     
     func addUserPreference(userId:String,preference:String) async throws{       //단순 값형태일 경우(String,Int,Bool등등)
         let data:[String:Any] = ["preference":FieldValue.arrayUnion([preference])]  //배열 중복제거 업데이트 FieldValue.arrayUnion
@@ -154,6 +164,7 @@ final class UserManager{
         ]
         try await document.setData(data,merge: false)
     }
+    
     
     func removeUserFavoriteProduct(userId:String,favoriteProductId:String)async throws{
         try await userFavoriteProdctDocument(userId: userId, favoriteProductId: favoriteProductId).delete()

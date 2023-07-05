@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		81167D152A553E6A00BE0B54 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 81167D142A553E6A00BE0B54 /* FirebaseStorage */; };
+		81167D182A55504A00BE0B54 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81167D172A55504A00BE0B54 /* StorageManager.swift */; };
 		815A23902A36DFE2009E1752 /* EX_FirebaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815A238F2A36DFE2009E1752 /* EX_FirebaseApp.swift */; };
 		815A23922A36DFE2009E1752 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815A23912A36DFE2009E1752 /* ContentView.swift */; };
 		815A23942A36DFE3009E1752 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 815A23932A36DFE3009E1752 /* Assets.xcassets */; };
@@ -56,6 +58,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		81167D172A55504A00BE0B54 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		815A238C2A36DFE2009E1752 /* EX_Firebase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EX_Firebase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		815A238F2A36DFE2009E1752 /* EX_FirebaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EX_FirebaseApp.swift; sourceTree = "<group>"; };
 		815A23912A36DFE2009E1752 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 				81EA96312A38465800F25BA2 /* FirebaseFirestoreSwift in Frameworks */,
 				81EA962B2A38465800F25BA2 /* FirebaseAnalyticsSwift in Frameworks */,
 				81EA962F2A38465800F25BA2 /* FirebaseFirestore in Frameworks */,
+				81167D152A553E6A00BE0B54 /* FirebaseStorage in Frameworks */,
 				81EA962D2A38465800F25BA2 /* FirebaseAuth in Frameworks */,
 				81EA96292A38465800F25BA2 /* FirebaseAnalytics in Frameworks */,
 			);
@@ -115,6 +119,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		81167D162A55503800BE0B54 /* Stroage */ = {
+			isa = PBXGroup;
+			children = (
+				81167D172A55504A00BE0B54 /* StorageManager.swift */,
+			);
+			path = Stroage;
+			sourceTree = "<group>";
+		};
 		815A23832A36DFE2009E1752 = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +152,7 @@
 		815A238E2A36DFE2009E1752 /* EX_Firebase */ = {
 			isa = PBXGroup;
 			children = (
+				81167D162A55503800BE0B54 /* Stroage */,
 				8192B71D2A4AA10F00754B46 /* Component */,
 				8192B7182A49BACA00754B46 /* Favorites */,
 				8192B7152A49B76100754B46 /* TabBar */,
@@ -274,6 +287,7 @@
 				81EA962E2A38465800F25BA2 /* FirebaseFirestore */,
 				81EA96302A38465800F25BA2 /* FirebaseFirestoreSwift */,
 				81F1385C2A398021001A6134 /* Kingfisher */,
+				81167D142A553E6A00BE0B54 /* FirebaseStorage */,
 			);
 			productName = EX_Firebase;
 			productReference = 815A238C2A36DFE2009E1752 /* EX_Firebase.app */;
@@ -407,6 +421,7 @@
 				8192B7172A49B79600754B46 /* TabbarView.swift in Sources */,
 				81F1385A2A39781D001A6134 /* ProductManager.swift in Sources */,
 				81F138582A3976CD001A6134 /* ProductView.swift in Sources */,
+				81167D182A55504A00BE0B54 /* StorageManager.swift in Sources */,
 				815A23C62A36F614009E1752 /* AuthenticationManager.swift in Sources */,
 				815A23C42A36F4E1009E1752 /* SignEmailView.swift in Sources */,
 				8192B71A2A49BAD500754B46 /* FavoriteView.swift in Sources */,
@@ -760,6 +775,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		81167D142A553E6A00BE0B54 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 81EA96272A38465800F25BA2 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		81EA96282A38465800F25BA2 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 81EA96272A38465800F25BA2 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

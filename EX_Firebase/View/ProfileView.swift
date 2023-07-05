@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import PhotosUI
+import Kingfisher
 
 @MainActor
 final class ProfileViewModel:ObservableObject{
@@ -58,6 +60,27 @@ final class ProfileViewModel:ObservableObject{
             self.user = try await UserManager.shared.getUser(userId: user.userId)
         }
     }
+    func saveProfileImage(item:PhotosPickerItem){
+        guard let user else {return} 
+        
+        Task{
+            guard let data = try await item.loadTransferable(type: Data.self) else {return}
+           
+            let (path,name) = try await StorageManager.shared.saveImage(data:data,userId: user.userId)
+            print(path)
+            print(name)
+            let url = try await StorageManager.shared.getUtlForImage(path: path)
+            try await UserManager.shared.updateUserProfileImagePath(userId: user.userId, path: path,url: url.absoluteString)
+        }
+    }
+    func deleteProfileImage(){ 
+        guard let user,let path = user.profileImage else {return}
+        
+        Task{
+            try await StorageManager.shared.deleteImage(path: path)
+            try await UserManager.shared.updateUserProfileImagePath(userId: user.userId, path: nil, url: nil)
+        }
+    }
 }
 
 struct ProfileView: View {
@@ -65,6 +88,9 @@ struct ProfileView: View {
     let option:[String]=["스포츠","영화","책"]
     @StateObject var vm = ProfileViewModel()
     @Binding var showSignView:Bool
+    
+    @State var selecteItem:PhotosPickerItem? = nil
+//    @State var url:URL? = nil
     
     private func preference(text:String)->Bool{
         vm.user?.preference?.contains(text) == true
@@ -109,6 +135,25 @@ struct ProfileView: View {
                 } label: {
                     Text("좋아하는 영화 : \((user.favoriteMovie?.title ?? ""))")
                 }
+                PhotosPicker(selection: $selecteItem,matching: .images, photoLibrary: .shared()) {
+                    Text("사진선택")
+                }
+                if let urlstring = vm.user?.profileImageUrl,let url = URL(string: urlstring){
+                    KFImage(url)
+                        .placeholder{
+                            ProgressView()
+                        }
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(10)
+                }
+                if ((vm.user?.profileImage) != nil){
+                    Button("삭제하기"){
+                        vm.deleteProfileImage()
+                    }
+                }
+                
 
             }
         }
@@ -118,7 +163,17 @@ struct ProfileView: View {
         .task{
             try? await vm.loadCurrentUser()
             //메서드 내에서 에러처리를 하지 않았기 때문에 옵셔널 선언
+//            if let user = vm.user,let path = user.profileImage{
+//                let url = try? await StorageManager.shared.getUtlForImage(path: path)
+//                self.url = url
+//            }
         }
+        .onChange(of: selecteItem, perform: { newValue in
+            if let newValue{
+                vm.saveProfileImage(item: newValue)
+            }
+           
+        })
         .navigationTitle("프로필")
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
